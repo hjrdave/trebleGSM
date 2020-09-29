@@ -4,9 +4,6 @@
 */
 import checkDispatchValue from './check-dispatch-value';
 import runSideEffect from './run-side-effect';
-import runListManagement from './run-list-management';
-import isSubscribeAPIListMethod from './is-subscribe-list-method';
-import generateStaticKeys from './generate-static-keys';
 import { IMiddleware } from '../interfaces';
 
 const runMiddleware: IMiddleware = (dispatchValue, storeItem, state, action) => {
@@ -16,7 +13,13 @@ const runMiddleware: IMiddleware = (dispatchValue, storeItem, state, action) => 
     let checkMiddleware = storeItem?.features?.check || null;
     let processMiddleware = storeItem?.features?.process || null;
     let callbackMiddleware = storeItem?.features?.callback || null;
-    let staticKeysMiddleware = storeItem?.features?.keys;
+
+    //data that will be consumed by modules
+    let moduleData = {
+        dispatchValue: dispatchValue,
+        storeItem: storeItem,
+        dispatchActions: action
+    }
 
     //subscribeAPI type
     let subscribeType = action?.subscribeType;
@@ -30,30 +33,27 @@ const runMiddleware: IMiddleware = (dispatchValue, storeItem, state, action) => 
     //Makes sure state passes check and then will continue middleware pipeline and then return a value
     if (doesDispatchValuePass) {
 
-        //list management middleware
-        if (isSubscribeAPIListMethod(subscribeType)) {
-            return runListManagement(dispatchValue, storeItem, state, action);
-        }
-
         //returns a processed dispatchValue
         if (processMiddleware !== null) {
+
+            //[need to run modules here]
 
             const processedDispatchValue = processMiddleware(dispatchValue);
 
             //runs callback if it exists with processedValue
             runSideEffect(processedDispatchValue, callbackMiddleware);
 
-            //if feature.keys are set to true returns state with key
-            generateStaticKeys(processedDispatchValue, staticKeysMiddleware);
-
             return processedDispatchValue;
         }
 
+        //[need to run modules here]
+        //list management middleware
+        // if (isSubscribeAPIListMethod(subscribeType)) {
+        //     return runListManagement(moduleData);
+        // }
+
         //runs a non-blocking callback function as soon as other middleware runs
         runSideEffect(dispatchValue, callbackMiddleware);
-
-        //gives static keys to objects in list if keys feature is set to true
-        generateStaticKeys(dispatchValue, staticKeysMiddleware);
 
         return dispatchValue
     }
