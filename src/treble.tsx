@@ -8,7 +8,6 @@ import Provider from "./provider";
 import buildState from "./state";
 import buildReducer from "./reducer";
 import Context from "./context";
-import { Persist } from "./persist";
 import { ITreble } from "./interfaces";
 
 function Treble({ children, store }: ITreble) {
@@ -44,7 +43,6 @@ function Treble({ children, store }: ITreble) {
         store={Store}
         scope={scopedContext !== undefined ? scopedContext : defaultContext}
       >
-        <Persist store={Store} />
         {children}
       </Provider>
     </>

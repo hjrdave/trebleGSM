@@ -21,9 +21,6 @@ const runMiddleware: IMiddleware = (dispatchValue, storeItem, state, action) => 
         dispatchActions: action
     }
 
-    //subscribeAPI type
-    let subscribeType = action?.subscribeType;
-
     //checks state agianst criteria then returns boolean
     let doesDispatchValuePass = checkDispatchValue(dispatchValue, checkMiddleware)
 
@@ -47,10 +44,6 @@ const runMiddleware: IMiddleware = (dispatchValue, storeItem, state, action) => 
         }
 
         //[need to run modules here]
-        //list management middleware
-        // if (isSubscribeAPIListMethod(subscribeType)) {
-        //     return runListManagement(moduleData);
-        // }
 
         //runs a non-blocking callback function as soon as other middleware runs
         runSideEffect(dispatchValue, callbackMiddleware);

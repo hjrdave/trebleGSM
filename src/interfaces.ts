@@ -14,8 +14,6 @@ export interface IStoreState {
 
 //Store Item Features Model
 export interface IStoreFeatures {
-  persist?: boolean,
-  keys?: boolean,
   call?: (state: any) => void,
   check?: (state: any) => boolean,
   process?: (state: any) => any,
